@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Server Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <header class="top">
+      <div>
+        <p class="eyebrow">Linux servers</p>
+        <h1>Server Monitor</h1>
+      </div>
+      <p class="badge">Read only</p>
+    </header>
+    <p class="lede">Live CPU, memory, network, and port usage will appear here. This page does not change a server.</p>
+    <section class="cards" aria-label="Metrics">
+      {% for card in cards %}
+      <article class="card">
+        <h2>{{ card.name }}</h2>
+        <p class="value">No data yet</p>
+        <p class="detail">{{ card.detail }}</p>
+      </article>
+      {% endfor %}
+    </section>
+  </main>
+</body>
+</html>
