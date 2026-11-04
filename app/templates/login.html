@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Sign in · Server monitor{% endblock %}
+{% block body %}
+<section class="panel narrow">
+  <h2>Sign in</h2>
+  <p class="lede">Internal view of this machine. Monitoring stays read only.</p>
+  {% if error %}
+  <p class="flash flash-error" role="alert">{{ error }}</p>
+  {% endif %}
+  <form method="post" action="{{ url_for('main.login') }}" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label for="username">Username</label>
+    <input id="username" name="username" autocomplete="username" required value="{{ request.form.get('username', '') }}">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit" class="primary">Sign in</button>
+  </form>
+</section>
+{% endblock %}
