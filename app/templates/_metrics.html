@@ -1,0 +1,60 @@
+<section class="cards" aria-label="Live metrics">
+  <article class="card">
+    <h2>CPU</h2>
+    {% if metrics and metrics.available %}
+    <p class="value">{{ metrics.cpu_display }}</p>
+    <p class="hint">Current use</p>
+    {% elif metrics and not metrics.available %}
+    <p class="hint">Not collected for this host.</p>
+    {% else %}
+    <p class="hint">No data yet. Add this machine as 127.0.0.1.</p>
+    {% endif %}
+  </article>
+  <article class="card">
+    <h2>Memory</h2>
+    {% if metrics and metrics.available %}
+    <p class="value">{{ metrics.memory_display }}</p>
+    <p class="hint">Used of total</p>
+    {% elif metrics and not metrics.available %}
+    <p class="hint">Not collected for this host.</p>
+    {% else %}
+    <p class="hint">No data yet.</p>
+    {% endif %}
+  </article>
+  <article class="card">
+    <h2>Network</h2>
+    {% if metrics and metrics.available %}
+    <p class="value">{{ metrics.sent_display }} sent</p>
+    <p class="value secondary">{{ metrics.recv_display }} received</p>
+    <p class="hint">Bytes since boot, not a live rate.</p>
+    {% elif metrics and not metrics.available %}
+    <p class="hint">Not collected for this host.</p>
+    {% else %}
+    <p class="hint">No data yet.</p>
+    {% endif %}
+  </article>
+  <article class="card card-wide">
+    <h2>Listening ports</h2>
+    {% if metrics and metrics.available %}
+    {% if metrics.ports %}
+    <table>
+      <thead>
+        <tr><th>Address</th><th>Port</th></tr>
+      </thead>
+      <tbody>
+        {% for port in metrics.ports %}
+        <tr><td>{{ port.address }}</td><td>{{ port.port }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="hint">No listening TCP ports are visible to this process.</p>
+    {% endif %}
+    <p class="hint">Address and port only.</p>
+    {% elif metrics and not metrics.available %}
+    <p class="hint">Not collected for this host.</p>
+    {% else %}
+    <p class="hint">No data yet.</p>
+    {% endif %}
+  </article>
+</section>

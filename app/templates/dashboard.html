@@ -1,30 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Server Monitor</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-  <main class="page">
-    <header class="top">
-      <div>
-        <p class="eyebrow">Linux servers</p>
-        <h1>Server Monitor</h1>
-      </div>
-      <p class="badge">Read only</p>
-    </header>
-    <p class="lede">Live CPU, memory, network, and port usage will appear here. This page does not change a server.</p>
-    <section class="cards" aria-label="Metrics">
-      {% for card in cards %}
-      <article class="card">
-        <h2>{{ card.name }}</h2>
-        <p class="value">No data yet</p>
-        <p class="detail">{{ card.detail }}</p>
-      </article>
+{% extends "base.html" %}
+{% block title %}Dashboard · Server monitor{% endblock %}
+{% block body %}
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <h2>This machine</h2>
+      <p class="lede">CPU, memory, network, and listening ports. Nothing on this page changes the host.</p>
+    </div>
+    <a class="refresh" href="{{ url_for('main.dashboard') }}">Refresh</a>
+  </div>
+  {% include "_metrics.html" %}
+</section>
+
+<section class="panel">
+  <h2>Servers</h2>
+  <form method="post" action="{{ url_for('main.add_server_view') }}" class="add-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div>
+      <label for="name">Display name</label>
+      <input id="name" name="name" maxlength="64" required>
+    </div>
+    <div>
+      <label for="hostname">Hostname</label>
+      <input id="hostname" name="hostname" maxlength="253" placeholder="127.0.0.1" required>
+    </div>
+    <button type="submit" class="primary">Add server</button>
+  </form>
+  {% if servers %}
+  <table class="servers">
+    <thead>
+      <tr><th>Name</th><th>Host</th><th>Collection</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for server in servers %}
+      <tr>
+        <td>{{ server.name }}</td>
+        <td>{{ server.hostname }}</td>
+        <td>{% if is_local_host(server.hostname) %}This machine{% else %}Listed only{% endif %}</td>
+        <td><a href="{{ url_for('main.server_detail', server_id=server.id) }}">View</a></td>
+      </tr>
       {% endfor %}
-    </section>
-  </main>
-</body>
-</html>
+    </tbody>
+  </table>
+  {% else %}
+  <p class="hint">No servers yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  setInterval(function () {
+    var name = document.getElementById("name");
+    var host = document.getElementById("hostname");
+    if ((name && name.value) || (host && host.value)) {
+      return;
+    }
+    window.location.reload();
+  }, 15000);
+</script>
+{% endblock %}

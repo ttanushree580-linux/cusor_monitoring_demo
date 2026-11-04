@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ server.name }} · Server monitor{% endblock %}
+{% block body %}
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <p class="eyebrow"><a href="{{ url_for('main.dashboard') }}">All servers</a></p>
+      <h2>{{ server.name }}</h2>
+      <p class="lede">{{ server.hostname }}</p>
+    </div>
+    <a class="refresh" href="{{ url_for('main.server_detail', server_id=server.id) }}">Refresh</a>
+  </div>
+  {% if not metrics.available %}
+  <p class="notice">{{ metrics.message }}</p>
+  {% endif %}
+  {% include "_metrics.html" %}
+</section>
+{% endblock %}
+{% block scripts %}
+{% if metrics.available %}
+<script>
+  setTimeout(function () { window.location.reload(); }, 15000);
+</script>
+{% endif %}
+{% endblock %}
